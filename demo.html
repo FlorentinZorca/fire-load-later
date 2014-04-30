@@ -8,8 +8,8 @@ if(typeof document.attachEvent === 'function'){
 	window.onload = null;
 }
 </script>
-This is a beginning text.
-<button id="blah" onclick="fireLoad();">click me!</button>
+This is a beginning text.<br>
+<button id="blah" onclick="fireLoad();">Click me to fire load event!</button>
 <script>
 if(typeof document.addEventListener === 'function'){
     document.addEventListener('load', function(){
@@ -36,6 +36,6 @@ if(typeof document.attachEvent === 'function'){
         var dummy = this;
     }
 </script>
-And this is the finishing text.
+<br>And this is the finishing text.
 </body>
 </html>
