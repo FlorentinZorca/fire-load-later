@@ -18,6 +18,9 @@ Include loadlater.js early (before any advertising) in your page:
 
 Call global (window) function fireLoad() to run all the registered load event handlers, regardless of the way they were registered. Do this after all advertising finished loading.
 
+    // somewhere after the whole advertising loaded
+    window.fireLoad();
+
 In older IE you also need a script on DOM ready to move the window.onload = handler to document.attachEvent('onload', handler),
 because older JavaScript versions cannot do Object.defineProperty and window.onload remains just a public field.
 Easiest way to have a DOM Ready script in Internet Explorer is to use defer:
