@@ -1,0 +1,41 @@
+<html>
+<script src="./loadlater.js"></script>
+<body>
+<script defer>
+if(typeof document.attachEvent === 'function'){
+	var dummy = window.onload;
+	document.attachEvent('onload', dummy);
+	window.onload = null;
+}
+</script>
+This is a beginning text.
+<button id="blah" onclick="fireLoad();">click me!</button>
+<script>
+if(typeof document.addEventListener === 'function'){
+    document.addEventListener('load', function(){
+        alert('document.addEventListener: Load fired!');
+        var dummy = this;
+    }, false);
+    var ghost = function(){alert('Should not see me!');}
+    document.addEventListener('load', ghost, false);
+    document.removeEventListener('load', ghost, false);
+}	
+if(typeof document.attachEvent === 'function'){
+    document.attachEvent('onload', function(){
+        alert('document.attachEvent: Load fired!');
+        var dummy = this;
+    });
+    var ghost = function(){alert('Should not see me!');}
+    document.attachEvent('onload', ghost);
+    document.detachEvent('onload', ghost);
+}	
+</script>
+<script>
+    window.onload = function(){
+        alert('window.onLoad: Load fired!');
+        var dummy = this;
+    }
+</script>
+And this is the finishing text.
+</body>
+</html>
