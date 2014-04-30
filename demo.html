@@ -2,35 +2,42 @@
 <script src="./loadlater.js"></script>
 <body>
 <script defer>
-if(typeof document.attachEvent === 'function'){
-	var dummy = window.onload;
-	document.attachEvent('onload', dummy);
-	window.onload = null;
+// This script is needed only for older IE, which can't do Object.defineProperty so we cannot proxy window.onload.
+// Note the script is with defer, to reliably run it upon DOM ready, without bizarre IE code for DOM State Change.
+if(typeof document.attachEvent === 'function'){ // older IE
+	if(window.onload){
+        document.attachEvent('onload', window.onload);
+        window.onload = null;
+    }
 }
 </script>
 This is a beginning text.<br>
 <button id="blah" onclick="fireLoad();">Click me to fire load event!</button>
 <script>
-if(typeof document.addEventListener === 'function'){
+var ghost = function(){alert('Should not see me!');}
+if(typeof document.addEventListener === 'function'){ // IE 10+, Firefox, Chrome, Opera
     document.addEventListener('load', function(){
         alert('document.addEventListener: Load fired!');
         var dummy = this;
     }, false);
-    var ghost = function(){alert('Should not see me!');}
+
+    // Add and remove an event handler to test removal functionality.
     document.addEventListener('load', ghost, false);
     document.removeEventListener('load', ghost, false);
 }	
-if(typeof document.attachEvent === 'function'){
+if(typeof document.attachEvent === 'function'){ // Older IE
     document.attachEvent('onload', function(){
         alert('document.attachEvent: Load fired!');
         var dummy = this;
     });
-    var ghost = function(){alert('Should not see me!');}
+
+    // Add and remove an event handler to test removal functionality.
     document.attachEvent('onload', ghost);
     document.detachEvent('onload', ghost);
 }	
 </script>
 <script>
+    // Test for the simplest and worst way of attaching an onload event handler.
     window.onload = function(){
         alert('window.onLoad: Load fired!');
         var dummy = this;
