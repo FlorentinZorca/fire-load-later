@@ -26,39 +26,20 @@
         handlers = dest;
     }
 
-    var fireEvent = function(extraData){
+    var fireEvent = function(){
         for(var i in handlers){ // map is only for modern browsers :(
             handlers[i].worker();
         }
         if(newLoad){newLoad.worker()}; // treated separately
     }
 
-    var addEventListener = function(event, handler, preventDefault){
-        if (event!='load'){
-            return oldAddEventListener(event, handler, preventDefault);
+    var getReplacement = function(originalFunction, internalFunction){ // bind is only for modern browsers :(
+        return function(event, handler, preventDefault){
+            if (event != 'load' && event != 'onload'){
+                return originalFunction(event, handler, preventDefault);
+            }
+            internalFunction(handler);
         }
-        add(handler);
-    }
-
-    var removeEventListener = function(event, handler, preventDefault){
-        if (event!='load'){
-            return oldRemoveEventListener(event, handler, preventDefault);
-        }
-        remove(handler);
-    }
-
-    var attachEvent = function(event, handler){
-        if (event!='onload'){
-            return oldAttachEvent(event, handler);
-        }
-        add(handler);
-    }
-
-    var detachEvent = function(event, handler){
-        if (event!='onload'){
-            return oldDetachEvent(event, handler);
-        }
-        remove(handler);
     }
 
     // replace onload field with a property (where available)
@@ -76,12 +57,12 @@
     }
 
     // replace attachEvent and detachEvent in older IE
-    if (oldAttachEvent) d.attachEvent = attachEvent;
-    if (oldDetachEvent) d.detachEvent = detachEvent;
+    if (oldAttachEvent) d.attachEvent = getReplacement(d.attachEvent, add);
+    if (oldDetachEvent) d.detachEvent = getReplacement(d.detachEvent, remove);
 
     // replace addEventListener and removeEventListener in IE9+, Firefox and Chrome
-    if (oldAddEventListener) d.addEventListener = addEventListener;
-    if (oldRemoveEventListener) d.removeEventListener = removeEventListener;
+    if (oldAddEventListener) d.addEventListener = getReplacement(d.addEventListener, add);
+    if (oldRemoveEventListener) d.removeEventListener = getReplacement(d.removeEventListener, remove);
 
     // fireLoad added to the window object for control over running the "load"/"onload" event handlers
     w.fireLoad = fireEvent;
